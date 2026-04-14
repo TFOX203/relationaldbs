@@ -29,7 +29,7 @@ public class UserDaoImpl implements UserDao{
 	public boolean insert(User user) {
 		//the ingredients that we need to do task
 		//insert sql
-		String insertSQL = "insert into users (name,password,balance,), (20, 'Alejandro', '123', 1, 234.3)";
+		String insertSQL = "insert into users (name,password,balance,email,phone,address,role,registerDate), (?, ?, ?, ?, ?, ? ,? ,? )";
 		// TODO Auto-generated method stub
 		//create an object of connection to establish a network connection with the database used in our program
 		try (Connection conn = 
@@ -41,7 +41,14 @@ public class UserDaoImpl implements UserDao{
 				PreparedStatement ps = 
 					conn.prepareStatement(insertSQL);) {
 			conn.close();
-			ps.setString(1);
+			ps.setString(1, user.getName());
+			ps.setString(2, user.getPassword());
+			ps.setDouble(3, user.getBalance());
+			ps.setString(4, user.getEmail());
+			ps.setString(5, user.getPhone());
+			ps.setString(6, user.getAddress());
+			ps.setString(7, user.getRole());
+			ps.setString(8, user.getRegisterDate());
 			
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
