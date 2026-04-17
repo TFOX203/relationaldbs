@@ -34,14 +34,15 @@ public class DBConnectionTest {
 			ps.close();
 						
 			//Table creation SQL
-			String createTableSQL = "create table if not exists users(" + "id integer not null," + "usernamne VARCHAR(255)," + "psw VARCHAR(255)," + "isVIP TINYINT(1)," + "balance FLOAT," + "PRIMARY KEY (id)" + ")";
+			String createTableSQL = "create table if not exists users(id serial, usernamne VARCHAR(255)," + "psw VARCHAR(255)," + "isVIP BOOLEAN," + "balance FLOAT," + "PRIMARY KEY (id)" + ")";
 			
 			ps = conn.prepareStatement(createTableSQL);
 			//ps.execute();
 			ps.executeUpdate();
+			ps.close();
 			
 			//Insert SQL
-			String insertSQL = "insert into users (10, 'Manolo'," + " '12343', 1, 234.3), (20, 'Alejandro', '123', 1, 234.3)";
+			String insertSQL = "insert into users( name,  password,  balance,  id, email,  phone,  address, role, registerDate) values('sasha', '12343', 3000, 1,'644420201','calle ramadan 23','user','12/05/2021'), ('Alejandro', '123', false, 234.3)";
 			
 			ps = conn.prepareStatement(insertSQL);
 			System.out.println(ps.executeUpdate());

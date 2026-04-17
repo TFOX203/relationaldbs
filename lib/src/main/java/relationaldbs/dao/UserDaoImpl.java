@@ -14,13 +14,14 @@ import relationaldbs.model.User;
 public class UserDaoImpl implements UserDao{
 	
 	//The direction of the database that we are going to connect
-		private final static String dbURL = "jdbc:postgresql://localhost:5432/postgres";
+		private final static String dbURL = "jdbc:postgresql://localhost:5432/happylearning";
 									//"jdbc:postgresql://192.168.1.170:5432/sanmple?ssl=true"
 		//The user name used to connect to the database
 		private final static String username = "postgres";
 		//The password required to connect
 		private final static String password = "admin";
 		//DriverManager class is used to manage different drivers for relational database
+		String dropTableSQL = "drop table if exists users";
 		String createTableSQL = "create table if not exists users(" + "id integer not null," + "usernamne VARCHAR(255)," + "psw VARCHAR(255)," + "isVIP TINYINT(1)," + "balance FLOAT," + "PRIMARY KEY (id)" + ")";
 	
 	
