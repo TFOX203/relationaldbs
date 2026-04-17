@@ -34,7 +34,7 @@ public class DBConnectionTest {
 			ps.close();
 						
 			//Table creation SQL
-			String createTableSQL = "create table if not exists users(id serial, usernamne VARCHAR(255)," + "psw VARCHAR(255)," + "isVIP BOOLEAN," + "balance FLOAT," + "PRIMARY KEY (id)" + ")";
+			String createTableSQL = "create table if not exists users(id serial, name VARCHAR(255)," + "password VARCHAR(255)," + "email VARCHAR(255)," + "phone VARCHAR(255)"+"balance FLOAT," + "PRIMARY KEY (id)" + ")";
 			
 			ps = conn.prepareStatement(createTableSQL);
 			//ps.execute();
