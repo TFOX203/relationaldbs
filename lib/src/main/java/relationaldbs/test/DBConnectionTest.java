@@ -1,4 +1,3 @@
- 
 package relationaldbs.test;
 
 import java.sql.Connection;
@@ -8,121 +7,120 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class DBConnectionTest {
-	
-	//The direction of the database that we are going to connect
-	private final static String dbURL = "jdbc:postgresql://localhost:5432/postgres";
-								//"jdbc:postgresql://192.168.1.170:5432/sanmple?ssl=true"
-	//The user name used to connect to the database
-	private final static String username = "postgres";
-	//The password required to connect
-	private final static String password = "admin";
-	//DriverManager class is used to manage different drivers for relational database
-	
-	public static void main(String[] args) {
-		
-		try {
-			//Obtain a object of class "Connection"wich represents 
-			//a connection between our application and the database
-			Connection conn = DriverManager.getConnection(dbURL, username, password);
-			System.out.println("The adress of the connection object is " + conn);
-			
-			createDataBase(conn);
-			
-			String dropTableSQL = "drop table if exists users";
-			PreparedStatement ps = conn.prepareStatement(dropTableSQL);
-			ps.executeUpdate();
-			ps.close();
-						
-			//Table creation SQL
-			String createTableSQL = "create table if not exists users(id serial, name VARCHAR(255)," + "password VARCHAR(255)," + "email VARCHAR(255)," + "phone VARCHAR(255)"+"balance FLOAT," + "PRIMARY KEY (id)" + ")";
-			
-			ps = conn.prepareStatement(createTableSQL);
-			//ps.execute();
-			ps.executeUpdate();
-			ps.close();
-			
-			//Insert SQL
-			String insertSQL = "insert into users( name,  password,  balance,  id, email,  phone,  address, role, registerDate) values('sasha', '12343', 3000, 1,'644420201','calle ramadan 23','user','12/05/2021'), ('Alejandro', '123', false, 234.3)";
-			
-			ps = conn.prepareStatement(insertSQL);
-			System.out.println(ps.executeUpdate());
-			ps.close();
-			
-			selectByName(ps, conn, "Manolo");
-			selectByName(ps, conn, "Lucas");
-			
-			
-						
-			deleteByName(ps, conn, "Panbro");
-			deleteByName(ps, conn, "Sansha");
-			
-			/*
-			 * String createTableSQL = 
-			 * "create table if not exists users(" 
-			 * + "id integer not null," + "usernamne VARCHAR(255)," 
-			 * + "psw VARCHAR(255)," 
-			 * + "isVIP TINYINT(1)," 
-			 * + "balance FLOAT," 
-			 * + "PRIMARY KEY (id)" 
-			 * + ")";
-			 */
-						
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}			
-		
-	}
-	
-	private static void selectByName(PreparedStatement ps, Connection conn, String name) throws SQLException {
-		
-		//Select psw, isVIP from users where username = 'Manolo';
-		String selectSQL = "select * from users where username = " + name;
-		
-		ps = conn.prepareStatement(selectSQL);
-		System.out.println(ps.executeUpdate());
-		
-		//We use the "next()" to check if we have reached the end of the result set
-		//If receive true, then there is more data
-		//rs.next();
-		//We can use a series of "getXXXX" methods to access each column of each row of data
-		try(ResultSet rs = ps.getResultSet()){				
-			
-			if(rs.next()) {
-				System.out.println(rs.getString("username"));
-				System.out.println(rs.getString("psw"));
-				System.out.println(rs.getBoolean("isVIP"));
-			}
-		}		
-					
-		ps.close();
-		
-	}
 
-	private static void deleteByName(PreparedStatement ps, Connection conn, String name) throws SQLException {
-		
-		//Delete SQL
-		String deleteSQL = "DELETE FROM users WHERE username = " + name;
-		
-		ps = conn.prepareStatement(deleteSQL);
-		System.out.println(ps.executeUpdate());
-		ps.close();
-		
-	}
+    private final static String dbURL = "jdbc:postgresql://localhost:5432/postgres";
+    private final static String username = "postgres";
+    private final static String password = "admin";
 
-	private static void createDataBase(Connection conn) {
-		
-		try {
-			//A SQL for creating a new database if it not exist
-			String dbCreationSQL = "CREATE DATABASE happylearning";
-			//This one is for Postgresql
-			//CREATE DATABASE happylearning
-			PreparedStatement ps = conn.prepareStatement(dbCreationSQL);
-			//ps.execute();
-			ps.executeUpdate();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		
-	}
+    public static void main(String[] args) {
 
+        try {
+            Connection conn = DriverManager.getConnection(dbURL, username, password);
+            System.out.println("Conexión establecida: " + conn);
+
+            createDataBase(conn);
+
+            // ─── DROP TABLE ───────────────────────────────────────────────
+            String dropTableSQL = "DROP TABLE IF EXISTS users";
+            PreparedStatement ps = conn.prepareStatement(dropTableSQL);
+            ps.executeUpdate();
+            ps.close();
+
+            // ─── CREATE TABLE ─────────────────────────────────────────────
+            // ✅ FIX 1: faltaba coma entre phone y balance
+            // ✅ FIX 2: añadidos campos address, role, registerDate que se usan en el INSERT
+            String createTableSQL = "CREATE TABLE IF NOT EXISTS users ("
+                    + "id SERIAL PRIMARY KEY,"
+                    + "name VARCHAR(255),"
+                    + "password VARCHAR(255),"
+                    + "email VARCHAR(255),"
+                    + "phone VARCHAR(255),"       // ✅ coma añadida aquí
+                    + "balance FLOAT,"
+                    + "address VARCHAR(255),"
+                    + "role VARCHAR(100),"
+                    + "registerDate VARCHAR(50)"
+                    + ")";
+
+            ps = conn.prepareStatement(createTableSQL);
+            ps.executeUpdate();
+            ps.close();
+
+            // ─── INSERT ───────────────────────────────────────────────────
+            // ✅ FIX 3: el INSERT tenía los valores desordenados y mal formateados
+            // ✅ FIX 4: PostgreSQL no acepta múltiples filas con columnas distintas
+            String insertSQL = "INSERT INTO users (name, password, balance, email, phone, address, role, registerDate) "
+                             + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+
+            ps = conn.prepareStatement(insertSQL);
+            ps.setString(1, "Sasha");
+            ps.setString(2, "12343");
+            ps.setDouble(3, 3000);
+            ps.setString(4, "sasha@email.com");
+            ps.setString(5, "644420201");
+            ps.setString(6, "Calle Ramadan 23");
+            ps.setString(7, "user");
+            ps.setString(8, "12/05/2021");
+            System.out.println("Filas insertadas: " + ps.executeUpdate());
+            ps.close();
+
+            // ─── SELECT ───────────────────────────────────────────────────
+            selectByName(conn, "Sasha");
+            selectByName(conn, "Lucas");
+
+            // ─── DELETE ───────────────────────────────────────────────────
+            deleteByName(conn, "Panbro");
+            deleteByName(conn, "Sasha");
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // ✅ FIX 5: eliminado ps como parámetro — se crea dentro del método
+    // ✅ FIX 6: usar executeQuery() en SELECT, no executeUpdate()
+    // ✅ FIX 7: usar parámetro ? en lugar de concatenar el nombre (evita SQL Injection)
+    // ✅ FIX 8: columna correcta es "name", no "username"
+    private static void selectByName(Connection conn, String name) throws SQLException {
+
+        String selectSQL = "SELECT * FROM users WHERE name = ?";
+
+        try (PreparedStatement ps = conn.prepareStatement(selectSQL)) {
+            ps.setString(1, name);
+
+            try (ResultSet rs = ps.executeQuery()) {  // ✅ executeQuery para SELECT
+                if (rs.next()) {
+                    System.out.println("Nombre: "   + rs.getString("name"));
+                    System.out.println("Password: " + rs.getString("password"));
+                    System.out.println("Balance: "  + rs.getDouble("balance"));
+                } else {
+                    System.out.println("No se encontró el usuario: " + name);
+                }
+            }
+        }
+    }
+
+    // ✅ FIX 9: usar parámetro ? en lugar de concatenar (evita SQL Injection)
+    // ✅ FIX 10: columna correcta es "name", no "username"
+    private static void deleteByName(Connection conn, String name) throws SQLException {
+
+        String deleteSQL = "DELETE FROM users WHERE name = ?";
+
+        try (PreparedStatement ps = conn.prepareStatement(deleteSQL)) {
+            ps.setString(1, name);
+            System.out.println("Filas eliminadas (" + name + "): " + ps.executeUpdate());
+        }
+    }
+
+    private static void createDataBase(Connection conn) {
+        try {
+            String dbCreationSQL = "CREATE DATABASE happylearning";
+            PreparedStatement ps = conn.prepareStatement(dbCreationSQL);
+            ps.executeUpdate();
+            ps.close();
+            System.out.println("Base de datos 'happylearning' creada.");
+        } catch (Exception e) {
+            // Si ya existe lanza excepción, es normal
+            System.out.println("La base de datos ya existe o no se pudo crear: " + e.getMessage());
+        }
+    }
 }

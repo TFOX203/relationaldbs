@@ -9,6 +9,7 @@ public class UserDaoTest {
 	//insert test
 	 UserDao userDao = new UserDaoImpl();
 	 userDao.insert(new User("Sasha","12345",3000, 1 , "sasha@gmail.com","644923321","calle ramadan 23","user","12/05/2021"));
-	 userDao.delete();
+	 
+	 
 }
 }
