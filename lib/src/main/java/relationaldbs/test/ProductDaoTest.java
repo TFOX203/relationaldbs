@@ -12,7 +12,6 @@ public class ProductDaoTest {
         productDao.createTable();
 
         // ─── INSERT ───────────────────────────────────────────────────────
-        //                 id   name              description                        price      stock  category     brand   tag
         System.out.println("=== INSERT PRODUCTS ===");
         productDao.insert(new Product(0, "Audi A3",        "Berlina compacta 150CV TFSI",          28999.99,  5, "Berlina",   "Audi", "nuevo"  ));
         productDao.insert(new Product(0, "Audi A4",        "Berlina ejecutiva 200CV quattro",       42999.99,  3, "Berlina",   "Audi", "oferta" ));

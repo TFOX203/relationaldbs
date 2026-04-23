@@ -8,16 +8,16 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+
 import relationaldbs.model.User;
+import relationaldbs.util.DBHelper;
 
 /**
  * @author __Alexander__
  */
 public class UserDaoImpl implements UserDao {
 
-	private final static String dbURL = "jdbc:postgresql://localhost:5432/happylearning";
-	private final static String username = "postgres";
-	private final static String password = "admin";
+	
 
 	// ─── Helper: mapea un ResultSet a un objeto User ───────────────────────
 	private User mapResultSet(ResultSet rs) throws SQLException {
@@ -40,7 +40,7 @@ public class UserDaoImpl implements UserDao {
 		String insertSQL = "INSERT INTO users (name, password, balance, email, phone, address, role, registerDate) "
 				+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
-		try (Connection conn = DriverManager.getConnection(dbURL, username, password);
+		try (Connection conn = DBHelper.getConnection();
 				PreparedStatement ps = conn.prepareStatement(insertSQL)) {
 
 			ps.setString(1, user.getName());
