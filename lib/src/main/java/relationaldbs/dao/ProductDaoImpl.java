@@ -1,7 +1,7 @@
 package relationaldbs.dao;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -9,12 +9,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import relationaldbs.model.Product;
+import relationaldbs.util.DBHelper;
 
 public class ProductDaoImpl implements ProductDao {
 
-    private final static String dbURL     = "jdbc:postgresql://localhost:5432/happylearning";
-    private final static String username  = "postgres";
-    private final static String password  = "admin";
+    
 
     // ─── Helper: mapea un ResultSet a un objeto Product ───────────────────
     private Product mapResultSet(ResultSet rs) throws SQLException {
@@ -44,7 +43,7 @@ public class ProductDaoImpl implements ProductDao {
                 + "tag         VARCHAR(100)"
                 + ")";
 
-        try (Connection conn   = DriverManager.getConnection(dbURL, username, password);
+        try (Connection conn   = DBHelper.getConnection();
              PreparedStatement drop   = conn.prepareStatement(dropSQL);
              PreparedStatement create = conn.prepareStatement(createSQL)) {
 
@@ -63,7 +62,7 @@ public class ProductDaoImpl implements ProductDao {
         String insertSQL = "INSERT INTO products (name, description, price, stock, category, brand, tag) "
                          + "VALUES (?, ?, ?, ?, ?, ?, ?)";
 
-        try (Connection conn = DriverManager.getConnection(dbURL, username, password);
+        try (Connection conn = DBHelper.getConnection();
              PreparedStatement ps = conn.prepareStatement(insertSQL)) {
 
             ps.setString(1, product.getName());
@@ -88,7 +87,7 @@ public class ProductDaoImpl implements ProductDao {
     public boolean delete(long id) {
         String deleteSQL = "DELETE FROM products WHERE id = ?";
 
-        try (Connection conn = DriverManager.getConnection(dbURL, username, password);
+        try (Connection conn = DBHelper.getConnection();
              PreparedStatement ps = conn.prepareStatement(deleteSQL)) {
 
             ps.setLong(1, id);
@@ -108,7 +107,7 @@ public class ProductDaoImpl implements ProductDao {
         String updateSQL = "UPDATE products SET name = ?, description = ?, price = ?, "
                          + "stock = ?, category = ?, brand = ?, tag = ? WHERE id = ?";
 
-        try (Connection conn = DriverManager.getConnection(dbURL, username, password);
+        try (Connection conn = DBHelper.getConnection();
              PreparedStatement ps = conn.prepareStatement(updateSQL)) {
 
             ps.setString(1, product.getName());
@@ -132,7 +131,7 @@ public class ProductDaoImpl implements ProductDao {
     public Product find(long id) {
         String findSQL = "SELECT * FROM products WHERE id = ?";
 
-        try (Connection conn = DriverManager.getConnection(dbURL, username, password);
+        try (Connection conn = DBHelper.getConnection();
              PreparedStatement ps = conn.prepareStatement(findSQL)) {
 
             ps.setLong(1, id);
@@ -153,7 +152,7 @@ public class ProductDaoImpl implements ProductDao {
     public Product find(String name) {
         String findSQL = "SELECT * FROM products WHERE name ILIKE ?";
 
-        try (Connection conn = DriverManager.getConnection(dbURL, username, password);
+        try (Connection conn = DBHelper.getConnection();
              PreparedStatement ps = conn.prepareStatement(findSQL)) {
 
             ps.setString(1, "%" + name + "%");
@@ -175,7 +174,7 @@ public class ProductDaoImpl implements ProductDao {
         String findAllSQL = "SELECT * FROM products";
         List<Product> products = new ArrayList<>();
 
-        try (Connection conn = DriverManager.getConnection(dbURL, username, password);
+        try (Connection conn = DBHelper.getConnection();
              PreparedStatement ps = conn.prepareStatement(findAllSQL);
              ResultSet rs = ps.executeQuery()) {
 

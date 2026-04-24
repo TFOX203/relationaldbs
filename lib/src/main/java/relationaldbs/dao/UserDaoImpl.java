@@ -1,7 +1,6 @@
 package relationaldbs.dao;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -66,7 +65,7 @@ public class UserDaoImpl implements UserDao {
 	public boolean delete(Long id) {
 		String deleteSQL = "DELETE FROM users WHERE id = ?";
 
-		try (Connection conn = DriverManager.getConnection(dbURL, username, password);
+		try (Connection conn = DBHelper.getConnection();
 				PreparedStatement ps = conn.prepareStatement(deleteSQL)) {
 
 			ps.setLong(1, id);
@@ -86,7 +85,7 @@ public class UserDaoImpl implements UserDao {
 		String updateSQL = "UPDATE users SET name = ?, password = ?, balance = ?, email = ?, "
 				+ "phone = ?, address = ?, role = ?, registerDate = ? WHERE id = ?";
 
-		try (Connection conn = DriverManager.getConnection(dbURL, username, password);
+		try (Connection conn = DBHelper.getConnection();
 				PreparedStatement ps = conn.prepareStatement(updateSQL)) {
 
 			ps.setString(1, user.getName());
@@ -111,7 +110,7 @@ public class UserDaoImpl implements UserDao {
 	public User find(Long id) {
 		String findSQL = "SELECT * FROM users WHERE id = ?";
 
-		try (Connection conn = DriverManager.getConnection(dbURL, username, password);
+		try (Connection conn = DBHelper.getConnection();
 				PreparedStatement ps = conn.prepareStatement(findSQL)) {
 
 			ps.setLong(1, id);
@@ -133,7 +132,7 @@ public class UserDaoImpl implements UserDao {
 	public User find(String email) {
 		String findSQL = "SELECT * FROM users WHERE email = ?";
 
-		try (Connection conn = DriverManager.getConnection(dbURL, username, password);
+		try (Connection conn = DBHelper.getConnection();
 				PreparedStatement ps = conn.prepareStatement(findSQL)) {
 
 			ps.setString(1, email);
@@ -156,7 +155,7 @@ public class UserDaoImpl implements UserDao {
 		String findSQL = "SELECT * FROM users WHERE email ILIKE ?";
 		// ↑ ILIKE = case insensitive en PostgreSQL
 
-		try (Connection conn = DriverManager.getConnection(dbURL, username, password);
+		try (Connection conn = DBHelper.getConnection();
 				PreparedStatement ps = conn.prepareStatement(findSQL)) {
 
 			ps.setString(1, "%" + email + "%");
@@ -179,7 +178,7 @@ public class UserDaoImpl implements UserDao {
 		String findAllSQL = "SELECT * FROM users";
 		List<User> users = new ArrayList<>();
 
-		try (Connection conn = DriverManager.getConnection(dbURL, username, password);
+		try (Connection conn = DBHelper.getConnection();
 				PreparedStatement ps = conn.prepareStatement(findAllSQL);
 				ResultSet rs = ps.executeQuery()) {
 
@@ -208,7 +207,7 @@ public class UserDaoImpl implements UserDao {
 	            + "registerDate VARCHAR(50)"
 	            + ")";
 
-	    try (Connection conn         = DriverManager.getConnection(dbURL, username, password);
+	    try (Connection conn         = DBHelper.getConnection();
 	         PreparedStatement drop   = conn.prepareStatement(dropSQL);
 	         PreparedStatement create = conn.prepareStatement(createSQL)) {
 
